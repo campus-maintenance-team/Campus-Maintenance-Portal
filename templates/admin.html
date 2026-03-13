@@ -1,0 +1,48 @@
+<!--templates/admin.html-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CampusLink</title>
+    <!-- use a dedicated stylesheet for admin page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Admin Dashboard</h1>
+            <p>View and manage all maintenance reports.</p>
+        </header>
+
+        <table class="admin-table" id="reportsTable">
+            <thead>
+                <tr>
+                    <th>Ticket ID</th>
+                    <th>Name</th>
+                    <th>Block</th>
+                    <th>Floor</th>
+                    <th>Room</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div id="details" class="hidden">
+            <h3>Report Details</h3>
+            <pre id="detailContent"></pre>
+        </div>
+    </div>
+
+    <footer>
+        <p>by BRO CODERS</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
