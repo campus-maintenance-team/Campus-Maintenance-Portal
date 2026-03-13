@@ -9,22 +9,31 @@ import io
 import base64
 from pathlib import Path
 
-# -------------------- APP CONFIG --------------------
 app = Flask(__name__)
 CORS(app)
 
-# -------------------- DATABASE SETUP --------------------
 DB_PATH = Path("maintenance_db.json")
 
-def get_db():
+# ---------------- DATABASE ----------------
+
+def init_db():
     if not DB_PATH.exists():
-        DB_PATH.write_text(json.dumps({"reports": []}))
-    return json.loads(DB_PATH.read_text())
+        DB_PATH.write_text(json.dumps({"reports": []}, indent=4))
+
+def get_db():
+    init_db()
+    with open(DB_PATH, "r") as f:
+        return json.load(f)
 
 def save_db(data):
-    DB_PATH.write_text(json.dumps(data, indent=4))
+    with open(DB_PATH, "w") as f:
+        json.dump(data, f, indent=4)
 
-# -------------------- QR CODE --------------------
+# ---------------- UTILITIES ----------------
+
+def generate_ticket_id():
+    return "CL" + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+
 def generate_qr_code(ticket_id):
     qr = qrcode.QRCode(
         version=1,
@@ -32,160 +41,161 @@ def generate_qr_code(ticket_id):
         box_size=10,
         border=4,
     )
+
     qr.add_data(f"Ticket ID: {ticket_id}")
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
 
     img_io = io.BytesIO()
-    img.save(img_io, 'PNG')
+    img.save(img_io, "PNG")
     img_io.seek(0)
 
     return base64.b64encode(img_io.getvalue()).decode()
 
-# -------------------- ROUTES --------------------
-@app.route('/')
+def error_response(message, code=400):
+    return jsonify({"status": "error", "message": message}), code
+
+def success_response(data={}, code=200):
+    return jsonify({"status": "success", **data}), code
+
+# ---------------- ROUTES ----------------
+
+@app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
-@app.route('/admin')
+@app.route("/admin")
 def admin():
-    return render_template('admin.html')
+    return render_template("admin.html")
 
-# -------------------- API: SUBMIT REPORT --------------------
-@app.route('/api/maintenance', methods=['POST'])
-def handle_submission():
-    try:
-        data = request.get_json(silent=True)
+# ---------------- SUBMIT REPORT ----------------
 
-        required_fields = [
-            'name', 'email', 'phone', 'block', 'floor',
-            'room_no', 'category', 'priority',
-            'issue_date', 'description'
-        ]
+@app.route("/api/maintenance", methods=["POST"])
+def submit_report():
 
-        for field in required_fields:
-            if not data.get(field):
-                return jsonify({
-                    "status": "error",
-                    "message": f"Missing field: {field}"
-                }), 400
+    data = request.get_json()
 
-        ticket_id = 'CL' + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        qr_code_base64 = generate_qr_code(ticket_id)
+    if not data:
+        return error_response("Invalid JSON body")
 
-        new_report = {
+    required_fields = [
+        "name",
+        "email",
+        "phone",
+        "block",
+        "floor",
+        "room_no",
+        "category",
+        "priority",
+        "issue_date",
+        "description",
+    ]
+
+    for field in required_fields:
+        if not data.get(field):
+            return error_response(f"Missing field: {field}")
+
+    ticket_id = generate_ticket_id()
+    qr_code = generate_qr_code(ticket_id)
+
+    report = {
+        "ticket_id": ticket_id,
+        "name": data["name"],
+        "email": data["email"],
+        "phone": data["phone"],
+        "block": data["block"],
+        "floor": data["floor"],
+        "room_no": data["room_no"],
+        "category": data["category"],
+        "other_detail": data.get("other_detail", ""),
+        "priority": data["priority"],
+        "issue_date": data["issue_date"],
+        "description": data["description"],
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "status": "Pending",
+        "qr_code": qr_code,
+    }
+
+    db = get_db()
+    db["reports"].append(report)
+    save_db(db)
+
+    return success_response(
+        {
+            "message": "Report submitted successfully",
             "ticket_id": ticket_id,
-            "name": data['name'],
-            "email": data['email'],
-            "phone": data['phone'],
-            "block": data['block'],
-            "floor": data['floor'],
-            "room_no": data['room_no'],
-            "category": data['category'],
-            "other_detail": data.get('other_detail', ''),
-            "priority": data['priority'],
-            "issue_date": data['issue_date'],
-            "description": data['description'],
-            "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "status": "Pending",
-            "qr_code": qr_code_base64
+            "qr_code": qr_code,
         }
+    )
 
-        db = get_db()
-        db["reports"].append(new_report)
-        save_db(db)
+# ---------------- GET ALL REPORTS ----------------
 
-        return jsonify({
-            "status": "success",
-            "message": "Report submitted successfully!",
-            "ticket_id": ticket_id,
-            "qr_code": qr_code_base64
-        }), 200
-
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
-
-# -------------------- API: GET ALL REPORTS --------------------
-@app.route('/api/reports', methods=['GET'])
+@app.route("/api/reports", methods=["GET"])
 def get_reports():
-    try:
-        db = get_db()
-        reports = db.get("reports", [])
 
-        for report in reports:
-            report.pop("qr_code", None)
+    db = get_db()
+    reports = db.get("reports", [])
 
-        return jsonify({
-            "status": "success",
-            "reports": reports
-        }), 200
+    # hide qr codes
+    clean_reports = []
 
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+    for r in reports:
+        copy = r.copy()
+        copy.pop("qr_code", None)
+        clean_reports.append(copy)
 
-# -------------------- API: GET SINGLE REPORT --------------------
-@app.route('/api/reports/<ticket_id>', methods=['GET'])
+    return success_response({"reports": clean_reports})
+
+# ---------------- GET SINGLE REPORT ----------------
+
+@app.route("/api/reports/<ticket_id>", methods=["GET"])
 def get_report(ticket_id):
-    try:
-        db = get_db()
-        for report in db.get("reports", []):
-            if report["ticket_id"] == ticket_id:
-                return jsonify({
-                    "status": "success",
-                    "report": report
-                }), 200
 
-        return jsonify({
-            "status": "error",
-            "message": "Report not found"
-        }), 404
+    db = get_db()
 
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+    for report in db.get("reports", []):
+        if report["ticket_id"] == ticket_id:
+            return success_response({"report": report})
 
-# -------------------- API: UPDATE STATUS --------------------
-@app.route('/api/reports/<ticket_id>', methods=['PUT'])
+    return error_response("Report not found", 404)
+
+# ---------------- UPDATE STATUS ----------------
+
+@app.route("/api/reports/<ticket_id>", methods=["PUT"])
 def update_report(ticket_id):
-    try:
-        data = request.get_json(silent=True)
-        db = get_db()
 
-        for report in db.get("reports", []):
-            if report["ticket_id"] == ticket_id:
-                if "status" in data:
-                    report["status"] = data["status"]
-                save_db(db)
-                return jsonify({
-                    "status": "success",
-                    "message": "Report updated"
-                }), 200
+    data = request.get_json()
 
-        return jsonify({
-            "status": "error",
-            "message": "Report not found"
-        }), 404
+    if not data:
+        return error_response("Invalid JSON body")
 
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+    status = data.get("status")
 
-# -------------------- HEALTH CHECK --------------------
-@app.route('/health')
+    if not status:
+        return error_response("Missing status field")
+
+    db = get_db()
+
+    for report in db["reports"]:
+
+        if report["ticket_id"] == ticket_id:
+
+            report["status"] = status
+            save_db(db)
+
+            return success_response({"message": "Report updated"})
+
+    return error_response("Report not found", 404)
+
+# ---------------- HEALTH ----------------
+
+@app.route("/health")
 def health():
     return {"status": "ok"}
 
-# -------------------- ENTRY POINT --------------------
+# ---------------- MAIN ----------------
+
 if __name__ == "__main__":
-    app.run()
+    init_db()
+    app.run(debug=True)
