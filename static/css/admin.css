@@ -21,7 +21,7 @@ body {
     background: rgba(30, 32, 49, 0.95);
     backdrop-filter: blur(10px);
     width: 100%;
-    max-width: 900px;
+    max-width: 950px;
     padding: 40px;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -62,13 +62,27 @@ header p {
 }
 
 /* Table styling */
+.admin-table-wrapper{
+    width: 100%;
+    overflow-x:auto
+}
+
+.admin-table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.admin-table-wrapper::-webkit-scrollbar-thumb {
+    background: #5e81ac;
+    border-radius: 10px;
+}
+
 .admin-table {
     width: 100%;
+    min-width: 850px;
     border-collapse: collapse;
     margin-top: 20px;
     background: rgba(40, 43, 64, 0.9);
     border-radius: 10px;
-    overflow: hidden;
 }
 
 .admin-table th,
@@ -135,6 +149,16 @@ header p {
     border-radius: 12px;
     overflow-x: auto;
 }
+
+#details::-webkit-scrollbar {
+    height: 8px;
+}
+
+#details::-webkit-scrollbar-thumb {
+    background: #5e81ac;
+    border-radius: 10px;
+}
+
 
 #detailContent {
     color: #eceff4;
