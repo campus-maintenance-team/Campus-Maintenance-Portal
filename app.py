@@ -1,6 +1,6 @@
 # app.py
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, session
 from flask_cors import CORS
 import json
 import datetime
@@ -10,9 +10,14 @@ import base64
 from pathlib import Path
 
 app = Flask(__name__)
+app.secret_key = "campuslink_secret_key"
 CORS(app)
 
 DB_PATH = Path("maintenance_db.json")
+
+# --------------ADMIN_PASSWORD--------------
+
+ADMIN_PASSWORD = "admin123"
 
 # ---------------- DATABASE ----------------
 
@@ -65,6 +70,17 @@ def success_response(data={}, code=200):
 def index():
     return render_template("index.html")
 
+@app.route("/admin-auth", methods=["POST"])
+def admin_auth():
+    data = request.get_json()
+    password = data.get("password")
+
+    if password == ADMIN_PASSWORD:
+        session["admin"] = True
+        return jsonify({"status": "success"})
+
+    return jsonify({"status":"error", "message": "Wrong password"}), 401
+    
 @app.route("/admin")
 def admin():
     return render_template("admin.html")
