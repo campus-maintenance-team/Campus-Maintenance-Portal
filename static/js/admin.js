@@ -74,7 +74,7 @@ function populateTable(reports) {
             <td>${r.category}</td>
             <td>${r.priority}</td>
             <td>
-                <select class="status-select" data-ticket="${r.ticket_id}">
+                <select class="status-select status-${r.status.replace(/\s/g,'').toLowerCase()}" data-ticket="${r.ticket_id}">
                     <option${r.status==='Pending'?' selected':''}>Pending</option>
                     <option${r.status==='In Progress'?' selected':''}>In Progress</option>
                     <option${r.status==='Completed'?' selected':''}>Completed</option>
@@ -146,6 +146,7 @@ async function updateStatus(ticketId, status) {
 
         if (data.status === 'success') {
             alert('Status updated');
+            fetchReports();
         } 
         else {
             alert('Failed: ' + data.message);
@@ -173,9 +174,72 @@ async function showDetails(ticketId) {
 
         if (data.status === 'success') {
 
+            const r = data.report;
+
             const detailArea = document.getElementById('detailContent');
 
-            detailArea.textContent = JSON.stringify(data.report, null, 2);
+            detailArea.innerHTML = `
+            <table class="details-table">
+                <tr>
+                    <td class="label">Ticket ID</td>
+                    <td>${r.ticket_id}</td>
+                </tr>
+                <tr>
+                    <td class="label">Name</td>
+                    <td>${r.name}</td>
+                </tr>
+                <tr>
+                    <td class="label">Email</td>
+                    <td>${r.email}</td>
+                </tr>
+                <tr>
+                    <td class="label">Phone</td>
+                    <td>${r.phone}</td>
+                </tr>
+                <tr>
+                    <td class="label">Block</td>
+                    <td>${r.block}</td>
+                </tr>
+                <tr>
+                    <td class="label">Floor</td>
+                    <td>${r.floor}</td>
+                </tr>
+                <tr>
+                    <td class="label">Room Number</td>
+                    <td>${r.room_no}</td>
+                </tr>
+                <tr>
+                    <td class="label">Category</td>
+                    <td>${r.category}</td>
+                </tr>
+                <tr>
+                    <td class="label">Other Detail</td>
+                    <td>${r.other_detail || "None"}</td>
+                </tr>
+                <tr>
+                    <td class="label">Priority</td>
+                    <td>${r.priority}</td>
+                </tr>
+                <tr>
+                    <td class="label">Status</td>
+                    <td>${r.status}</td>
+                </tr>
+                <tr>
+                    <td class="label">Description</td>
+                    <td>${r.description}</td>
+                </tr>
+                <tr>
+                    <td class="label">Submitted At</td>
+                    <td>${r.timestamp}</td>
+                </tr>
+                <tr>
+                    <td class="label">QR Code</td>
+                    <td>
+                        <img src="data:image/png;base64,${r.qr_code}" class="qr-image">
+                    </td>
+                </tr>
+            </table>
+            `;
 
             document.getElementById('details').classList.remove('hidden');
 

@@ -126,7 +126,6 @@ def submit_report():
         "category": data["category"],
         "other_detail": data.get("other_detail", ""),
         "priority": data["priority"],
-        "issue_date": data["issue_date"],
         "description": data["description"],
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "status": "Pending",
