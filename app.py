@@ -6,8 +6,10 @@ import json
 import datetime
 import qrcode
 import io
+import os
 import base64
 from pathlib import Path
+from email_utils import send_ticket_email
 
 app = Flask(__name__)
 app.secret_key = "campuslink_secret_key"
@@ -17,7 +19,7 @@ DB_PATH = Path("maintenance_db.json")
 
 # --------------ADMIN_PASSWORD--------------
 
-ADMIN_PASSWORD = "admin123"
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
 
 # ---------------- DATABASE ----------------
 
@@ -135,6 +137,12 @@ def submit_report():
     db = get_db()
     db["reports"].append(report)
     save_db(db)
+
+    try:
+        send_ticket_email(ticket_id, report)
+
+    except Exception as e:
+        print(f"Email error: {str(e)}")
 
     return success_response(
         {
