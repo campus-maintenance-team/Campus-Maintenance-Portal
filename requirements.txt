@@ -4,3 +4,5 @@ qrcode
 pillow
 
 gunicorn
+sib-api-v3-sdk
+requests
