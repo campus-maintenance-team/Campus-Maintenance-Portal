@@ -72,6 +72,20 @@ campus-maintenance-portal
 └── README.md
 ```
 
+---
+
+## Screenshots
+
+### Complaint page
+![](screenshots/User-1.png)
+![](screenshots/User-2.png)
+
+### Admin page
+![](screenshots/Admin-1.png)
+![](screenshots/Admin-2.png)
+
+---
+
 ## How It Works
 
 1. A user fills out the complaint form.
