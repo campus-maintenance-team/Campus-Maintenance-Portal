@@ -48,22 +48,7 @@
             "status": "Pending",
             "qr_code": "iVBORw0KGgoAAAANSUhEUgAAAUoAAAFKAQAAAABTUiuoAAAB+0lEQVR4nO1bQW6EMAyceJF6XH7Qp8AP+qY+qT+Ap/QH5FgJ5Mp2Qrc9VLlU6248BzbAHCwPdiaETYxGrNTKBIJKkSzE49IMCioiWc2goEKQCgYAeUBK45HSnOvlOZLl6nGZWLABqgzzdhH3cdGr7CzWjqlD+c0jML0BDOxIwGVnZNjIS6wUVHxHaYeRrH/xuPBy3eXwke4UwC8g9E4dyu9VZidtfddjwLQddpk9xUpBhWJV7zeK33h/YiA/cZpxmCWMZPmqLT7PeR2RGJBOqPX21wFQUNEO/vLo0yZHm7fkmo12o/ASeSUnak0qmSqjSy0bqekwrTjUghe1eDnlEbV4MXcoMm517bzcPVbqnopaW3t9oaGnIhmzNsF6Y4lkkZfagsijrQ9nJ7QJrbx+4lALTtTCWUziBLm0Q3UZoZZDtbjU0Y0xLDLGvOWPmlOyiapUVFkxa6l5i7Vf6lAH8qpdXsQbZJNLB2vyEyt1T0X1gdUOWjusTvDGLC6RLHK3dzyZMRTkwWOsTaA+9o759XlHmlWoq+5DlsUy3MTaAnpsai6fX1ShmIvLqDfgJ9YGUCfUqXbCMo2FJ/Ss1qqfO8nWllbZOjqOFb3vHStYjaGc8vriJ1YKKn7sHQtsBrPTHHvHfh6XFP9awJ0loKAiktUMCioiWc140GR9Aj7rT/TeQmdhAAAAAElFTkSuQmCC"
         },
-        {
-            "ticket_id": "CL20260128144624",
-            "name": "anupam chaudhary",
-            "email": "chaudharyanupam746@gmail.com",
-            "phone": "+918368001503",
-            "block": "A",
-            "floor": "6",
-            "room_no": "56",
-            "category": "Electrical",
-            "other_detail": "",
-            "priority": "Low",
-            "description": "reak light",
-            "timestamp": "2026-01-28 14:46:24",
-            "status": "Pending",
-            "qr_code": "iVBORw0KGgoAAAANSUhEUgAAAUoAAAFKAQAAAABTUiuoAAACLElEQVR4nO1awW3DMAw80gb6dIAMJG/QkYKO1A2sUTJAAftZwAELUlKaFiigPNoIFe+R2PI9CNInnSiToBKRa5mAU9mTBX9dqsFOhSerGuxUKChjBM24EM0bEbCV4dmT1dTrEkSxAvJCTyKLVnDGYKPSWKw14P9N3YqEwqpSOwypRqa3PwmgAlxD6ow67Sq1d3pYAD+C0Tt1/D4Qn99GiQQItr8IgJ2Ku6s16cyn5QnnJ6EgAIVXLZnntb03K5r3O5i3UGxWxUuyhI3Fit61JbdDF8qToOnttwNgp6Iekjy6eYt1SOY9GXfRW3tq/n7xvPKj3yyUygCyTFa38qNePlXQsDw8Vu6eilwKDKk8qW7ppwjMtdXgTCiLToeGIHplY1ZG11ZLVLFW0+k8lpIlT6iY3smeopVYe6biRlv5yibGsoz5utUolebrLuskO+i0Xsi05T34VqqFG4+e/IapTL2FPfV1q6Vqjfl/O0Ci9jHCantllZXq7dcDYKfizmRJWqNs3bKzk89bz2tz2qJ8N+zWdBKVGrAdd4TXYzOxcvdU3K5bqfNkS1beZSWL6L2MRs+OSe1gahtqXx5h1c802oq1X+r4fSCSTYcEBN11RRqEGomVnYqvENGtlokp2icZ0/XMnz1ZaOzsmFRRAuz5QTj7VzTNVSsmAQ3JCZK5DGwH7WVIcYz86Fi5e+poGfjcV6msym05O85/3H2y2DMA11Y12KnwZFWDnYpqfAAs9UMZQxFrDAAAAABJRU5ErkJggg=="
-        },
+    
         {
             "ticket_id": "CL20260325083512",
             "name": "Akansha Chaudhary",
